@@ -47,7 +47,7 @@ export const Board = () => {
       >
         Flipp
       </Link>
-      <div className="mx-1 flex gap-1">
+      <div className="mx-1 flex w-full max-w-screen-md gap-1">
         {taskColumns.map((taskColumn) => (
           <div key={taskColumn.points} className="flex w-full flex-col gap-1">
             <div className="text-center font-bold">{taskColumn.points}</div>
@@ -64,7 +64,7 @@ export const Board = () => {
 const TaskTile = ({ task }: { task: Task }) => {
   return (
     <div className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border-2 border-amber-700 bg-amber-50 p-1">
-      <p className="h-auto text-center text-xs">{task.text}</p>
+      <p className="h-auto text-center text-xs md:text-lg">{task.text}</p>
     </div>
   );
 };

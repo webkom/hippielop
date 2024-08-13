@@ -1,7 +1,7 @@
-import { LatestPost } from "~/app/_components/post";
 import { api, HydrateClient } from "~/trpc/server";
 import { Board } from "~/app/_components/board";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export default async function Home() {
   void api.task.getAll.prefetch();
@@ -20,9 +20,9 @@ export default async function Home() {
             <div className="absolute inset-0 top-16 bg-gradient-to-t from-[#ddcfaf]" />
           </h1>
 
-          <Board />
-
-          <LatestPost />
+          <Suspense>
+            <Board />
+          </Suspense>
         </div>
       </main>
     </HydrateClient>
