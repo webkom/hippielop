@@ -1,4 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { boardOpensDate } from "~/shared/config";
 
 export interface Task {
   id: number;
@@ -89,6 +90,7 @@ const tasks: Task[] = (
 
 export const taskRouter = createTRPCRouter({
   getAll: publicProcedure.query(() => {
+    if (new Date() < boardOpensDate) return [];
     return tasks;
   }),
 });
