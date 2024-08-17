@@ -4,7 +4,7 @@ import { Pacifico } from "next/font/google";
 import { api } from "~/trpc/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import {type Task} from "@prisma/client";
+import { type Task } from "@prisma/client";
 
 const pacifico = Pacifico({
   weight: "400",

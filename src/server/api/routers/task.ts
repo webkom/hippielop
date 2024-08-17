@@ -10,8 +10,8 @@ export const taskRouter = createTRPCRouter({
     try {
       return await prisma.task.findMany();
     } catch (error) {
-      console.error('Error fetching tasks:', error);
-      throw new Error('Failed to fetch tasks');
+      console.error("Error fetching tasks:", error);
+      throw new Error("Failed to fetch tasks");
     }
   }),
 });
