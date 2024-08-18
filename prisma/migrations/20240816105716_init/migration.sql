@@ -1,7 +1,0 @@
--- CreateTable
-CREATE TABLE "Task" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "page" INTEGER NOT NULL,
-    "points" INTEGER NOT NULL,
-    "text" TEXT NOT NULL
-);

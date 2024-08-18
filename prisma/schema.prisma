@@ -16,4 +16,27 @@ model Task {
   page Int
   points Int
   text String
+  groups GroupTask[]
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  name String
+  code String
+  tasks GroupTask[]
+}
+
+model GroupTask {
+  id Int @id @default(autoincrement())
+  status Status @default(started)
+  groupId Int
+  taskId Int
+  task Task @relation(fields: [taskId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+}
+
+enum Status {
+  started
+  sent
+  completed
 }
