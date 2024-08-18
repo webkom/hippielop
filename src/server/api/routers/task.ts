@@ -1,14 +1,11 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { boardOpensDate } from "~/shared/config";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 export const taskRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async () => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     if (new Date() < boardOpensDate) return [];
     try {
-      return await prisma.task.findMany();
+      return await ctx.db.task.findMany();
     } catch (error) {
       console.error("Error fetching tasks:", error);
       throw new Error("Failed to fetch tasks");

@@ -1,9 +1,9 @@
 import { api, HydrateClient } from "~/trpc/server";
-import { Board } from "~/app/_components/board";
 import Image from "next/image";
 import { Suspense } from "react";
 import { Countdown } from "~/app/_components/countdown";
 import { boardOpensDate } from "~/shared/config";
+import LoginForm from "~/app/_components/login-form";
 
 export default async function Home() {
   void api.task.getAll.prefetch();
@@ -23,7 +23,7 @@ export default async function Home() {
           </h1>
 
           <Suspense>
-            <Countdown date={boardOpensDate} doneNode={<Board />} />
+            <Countdown date={boardOpensDate} doneNode={<LoginForm />} />
           </Suspense>
         </div>
       </main>

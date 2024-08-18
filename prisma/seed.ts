@@ -29,30 +29,30 @@ const tasks = [
 ];
 
 const groups = [
-  { name: "Data 1"},
-  { name: "Data 2"},
-  { name: "Data 3"},
-  { name: "Data 4"},
-  { name: "Data 5"},
-  { name: "Data 6"},
-  { name: "Data 7"},
-  { name: "Data 8"},
-  { name: "Data 9"},
-  { name: "Data 10"},
-  { name: "Data 11"},
-  { name: "Data 12"},
+  { name: "Data 1" },
+  { name: "Data 2" },
+  { name: "Data 3" },
+  { name: "Data 4" },
+  { name: "Data 5" },
+  { name: "Data 6" },
+  { name: "Data 7" },
+  { name: "Data 8" },
+  { name: "Data 9" },
+  { name: "Data 10" },
+  { name: "Data 11" },
 
-  { name: "Cybdat 1"},
-  { name: "Cybdat 2"},
-  { name: "Cybdat 3"},
-  { name: "Cybdat 4"},
-  { name: "Cybdat 5"},
-  { name: "Cybdat 6"},
+  { name: "Cybdat 1" },
+  { name: "Cybdat 2" },
+  { name: "Cybdat 3" },
+  { name: "Cybdat 4" },
+  { name: "Cybdat 5" },
+  { name: "Cybdat 6" },
 ];
 
 function generateCode() {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   let counter = 0;
   while (counter < 6) {
@@ -69,7 +69,7 @@ async function main() {
     });
     console.log("Seeded tasks");
     await prisma.group.createMany({
-      data: groups.map((group) => ({ ...group, code: generateCode()})),
+      data: groups.map((group) => ({ ...group, code: generateCode() })),
     });
     console.log("Seeded groups");
   } catch (error) {

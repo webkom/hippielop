@@ -22,6 +22,7 @@ export const Board = () => {
   const page = searchParams.get("page") === "2" ? 2 : 1;
 
   const [tasks] = api.task.getAll.useSuspenseQuery();
+  const [userId] = api.group.getGroup.useSuspenseQuery();
 
   const taskColumns = tasks
     .filter((task) => task.page === page)
@@ -47,6 +48,7 @@ export const Board = () => {
       >
         Flipp
       </Link>
+      {userId && <p>Innlogget som {userId}</p>}
       <div className="mx-1 flex w-full max-w-screen-md gap-1">
         {taskColumns.map((taskColumn) => (
           <div key={taskColumn.points} className="flex w-full flex-col gap-1">

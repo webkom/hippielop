@@ -20,16 +20,37 @@ model Task {
 }
 
 model Group {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   name String
   code String
   tasks GroupTask[]
+  accounts Account[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  group Group @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model GroupTask {
   id Int @id @default(autoincrement())
   status Status @default(started)
-  groupId Int
+  groupId String
   taskId Int
   task Task @relation(fields: [taskId], references: [id])
   group Group @relation(fields: [groupId], references: [id])
