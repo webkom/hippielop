@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from "~/app/_components/ui/card";
 import { LoginSchema } from "~/shared/schemas";
-import {useSearchParams} from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
