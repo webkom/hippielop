@@ -1,6 +1,9 @@
+import { db } from "~/server/db";
 import NextAuth, { type User } from "next-auth";
 
 import authConfig from "~/auth.config";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Adapter } from "@auth/core/adapters";
 
 export const {
   handlers: { GET, POST },
@@ -20,6 +23,7 @@ export const {
       return session;
     },
   },
+  adapter: PrismaAdapter(db) as Adapter,
   ...authConfig,
   session: {
     strategy: "jwt",
