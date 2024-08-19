@@ -3,9 +3,10 @@ import { TRPCError } from "@trpc/server";
 
 export const groupRouter = createTRPCRouter({
   getGroup: publicProcedure.query(async ({ ctx }) => {
-    if (!ctx.session?.user?.sub) {
+    if (!ctx.session?.user?.id) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-    return ctx.session?.user.sub;
+
+    return ctx.session?.user.id;
   }),
 });
