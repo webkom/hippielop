@@ -1,5 +1,5 @@
 import { db } from "~/server/db";
-import NextAuth from "next-auth";
+import NextAuth, { type User } from "next-auth";
 
 import authConfig from "~/auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -16,7 +16,10 @@ export const {
       return { ...token, ...user };
     },
     async session({ session, token }) {
-      session.user = token as any;
+      session.user = token as unknown as User & {
+        sub: string;
+        accessToken: string;
+      };
       return session;
     },
   },
