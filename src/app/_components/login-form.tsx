@@ -1,29 +1,16 @@
 "use client";
 
-import { login } from "~/actions/auth";
-import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
-  const [code, setCode] = useState("");
-
-  const handleLogin = async () => {
-    try {
-      await login(code);
-      window.location.href = "/game";
-    } catch (error) {
-      alert(error);
-    }
-  };
-
   return (
     <>
       <span>Kode:</span>
-      <input onInput={(e) => setCode(e.currentTarget.value)} value={code} />
       <button
         className="border-1 rounded-lg border-amber-400 bg-amber-200 p-3"
-        onClick={handleLogin}
+        onClick={() => signIn("lego")}
       >
-        Opne brettet
+        Logg inn med Abakus.no
       </button>
     </>
   );
