@@ -35,7 +35,7 @@ export default function LoginForm() {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      code: code || "",
+      code: code ?? "",
     },
   });
 
