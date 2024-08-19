@@ -7,6 +7,6 @@ export const groupRouter = createTRPCRouter({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    return ctx.session?.user.id;
+    return ctx.session?.user;
   }),
 });

@@ -1,30 +1,92 @@
 "use client";
 
 import { login } from "~/actions/auth";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/app/_components/ui/form";
+import { Input } from "~/app/_components/ui/input";
+import { Button } from "~/app/_components/ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import type * as z from "zod";
+import { FormError } from "~/app/_components/ui/form-error";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "~/app/_components/ui/card";
+import { LoginSchema } from "~/shared/schemas";
 
 export default function LoginForm() {
-  const [code, setCode] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>("");
 
-  const handleLogin = async () => {
-    try {
-      await login(code);
-      window.location.href = "/game";
-    } catch (error) {
-      alert(error);
-    }
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      code: "",
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof LoginSchema>) => {
+    setError("");
+
+    startTransition(async () => {
+      try {
+        const res = await login(data);
+        if (res) {
+          window.location.reload();
+        }
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message || "An unknown error occurred");
+      }
+    });
   };
 
   return (
-    <>
-      <span>Kode:</span>
-      <input onInput={(e) => setCode(e.currentTarget.value)} value={code} />
-      <button
-        className="border-1 rounded-lg border-amber-400 bg-amber-200 p-3"
-        onClick={handleLogin}
-      >
-        Opne brettet
-      </button>
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>Oppgi koden til din faddergruppe</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kode</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Kode"
+                        type="text"
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormError message={error} />
+            <Button type="submit" className="w-full" disabled={isPending}>
+              Logg inn
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

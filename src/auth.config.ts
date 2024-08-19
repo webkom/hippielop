@@ -1,8 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "~/server/db";
-import jwt from "jsonwebtoken";
-import { env } from "~/env";
 
 export default {
   providers: [
@@ -20,11 +18,7 @@ export default {
           return null;
         }
 
-        const token = jwt.sign({ groupId: group.id }, env.JWT_SECRET, {
-          expiresIn: "1h",
-        });
-
-        return { id: group.id, accessToken: token };
+        return group;
       },
     }),
   ],
