@@ -24,15 +24,18 @@ import {
   CardTitle,
 } from "~/app/_components/ui/card";
 import { LoginSchema } from "~/shared/schemas";
+import {useSearchParams} from "next/navigation";
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      code: "",
+      code: code || "",
     },
   });
 
