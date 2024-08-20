@@ -11,8 +11,10 @@ import { RotateCwIcon } from "lucide-react";
 import { Modal } from "~/app/_components/modal";
 import { useState } from "react";
 import { type User } from "next-auth";
+import { Scoreboard } from "./scoreboard";
+import { type Group } from "@prisma/client";
 
-const pacifico = Pacifico({
+export const pacifico = Pacifico({
   weight: "400",
   subsets: ["latin"],
 });
@@ -26,10 +28,12 @@ interface TaskColumn {
 
 export const Board = ({
   tasks: initialTasks,
-  group,
+  currentGroup,
+  groups,
 }: {
   tasks: GetAllTask[];
-  group: User;
+  currentGroup: User;
+  groups: Group[];
 }) => {
   const [tasks, setTasks] = useState(initialTasks);
   const searchParams = useSearchParams();
@@ -80,8 +84,10 @@ export const Board = ({
 
   return (
     <>
-      <h2 className={`${pacifico.className} text-3xl text-white drop-shadow`}>
-        {group.name} - Side {page}
+      <h2
+        className={`${pacifico.className} my-4 text-3xl text-white drop-shadow`}
+      >
+        {currentGroup.name} - Side {page}
       </h2>
       <Link href={pathname + (page == 1 ? "?page=2" : "")}>
         <Button>
@@ -89,7 +95,7 @@ export const Board = ({
           Flipp
         </Button>
       </Link>
-      <div className="flex w-full max-w-screen-md gap-0.5 px-1">
+      <div className="my-4 flex w-full max-w-screen-md gap-0.5 px-1">
         {taskColumns.map((taskColumn) => (
           <div
             key={taskColumn.points}
@@ -97,12 +103,17 @@ export const Board = ({
           >
             <div className="text-center font-bold">{taskColumn.points}</div>
             {taskColumn.tasks.map((task) => (
-              <TaskTile key={task.id} task={task} groupId={group.id} />
+              <TaskTile key={task.id} task={task} groupId={currentGroup.id} />
             ))}
           </div>
         ))}
       </div>
-      <Button variant="outline" className="mt-4" onClick={() => logout()}>
+      <Scoreboard
+        tasks={tasks}
+        groups={groups}
+        currentGroupId={currentGroup.id}
+      />
+      <Button variant="outline" className="my-4" onClick={() => logout()}>
         Logg ut
       </Button>
     </>

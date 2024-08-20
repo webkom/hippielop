@@ -4,12 +4,13 @@ import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Game() {
   const tasks = await api.task.getAll();
-  const group = await api.group.getGroup();
+  const currentGroup = await api.group.getGroup();
+  const groups = await api.group.getAll();
 
   return (
     <HydrateClient>
       <Suspense>
-        <Board tasks={tasks} group={group} />
+        <Board tasks={tasks} currentGroup={currentGroup} groups={groups} />
       </Suspense>
     </HydrateClient>
   );
