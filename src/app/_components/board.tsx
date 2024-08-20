@@ -31,11 +31,39 @@ export const Board = ({
   tasks: GetAllTask[];
   group: User;
 }) => {
+  const [tasks, setTasks] = useState(initialTasks);
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const page = searchParams.get("page") === "2" ? 2 : 1;
 
-  const [tasks, setTasks] = useState(initialTasks);
+  api.groupTask.onGroupTaskChanged.useSubscription(undefined, {
+    onData: (groupTask) => {
+      setTasks((tasks) => {
+        return tasks.map((task) => {
+          if (task.id !== groupTask.data.taskId) {
+            return task;
+          }
+          const groupTaskContained = task.groups.some(
+            (gt) => gt.groupId === groupTask.data.groupId,
+          );
+          return {
+            ...task,
+            groups: groupTaskContained
+              ? task.groups.map((group) => {
+                  if (group.groupId !== groupTask.data.groupId) {
+                    return group;
+                  }
+                  return {
+                    ...group,
+                    status: groupTask.data.status,
+                  };
+                })
+              : [...task.groups, groupTask.data],
+          };
+        });
+      });
+    },
+  });
 
   const taskColumns = tasks
     .filter((task) => task.page === page)
@@ -69,7 +97,7 @@ export const Board = ({
           >
             <div className="text-center font-bold">{taskColumn.points}</div>
             {taskColumn.tasks.map((task) => (
-              <TaskTile key={task.id} task={task} />
+              <TaskTile key={task.id} task={task} groupId={group.id} />
             ))}
           </div>
         ))}
@@ -88,17 +116,25 @@ const statusStrings = {
   notStarted: "Ikke påbegynt",
 };
 
-const TaskTile = ({ task }: { task: GetAllTask }) => {
+const statusClassName = {
+  started: "bg-yellow-300 ",
+  sent: "bg-blue-300",
+  completed: "bg-green-400 border-green-800",
+  notStarted: "bg-card",
+};
+
+const TaskTile = ({ task, groupId }: { task: GetAllTask; groupId: string }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { mutate, error, isPending } = api.task.setStatus.useMutation();
+  const { mutate, isPending } = api.task.setStatus.useMutation();
 
-  const status = task.groups[0]?.status ?? "notStarted";
+  const status =
+    task.groups.find((g) => g.groupId === groupId)?.status ?? "notStarted";
 
   return (
     <>
       <Card
-        className="flex aspect-square items-center justify-center overflow-hidden"
+        className={`flex aspect-square items-center justify-center overflow-hidden ${statusClassName[status]}`}
         onClick={() => setIsModalOpen(true)}
       >
         <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] md:text-lg">

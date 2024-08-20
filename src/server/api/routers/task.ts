@@ -2,6 +2,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { boardOpensDate } from "~/shared/config";
 import { z } from "zod";
 import { Status } from "@prisma/client";
+import { ee } from "./group-task";
 
 export const taskRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -9,11 +10,7 @@ export const taskRouter = createTRPCRouter({
     try {
       return await ctx.db.task.findMany({
         include: {
-          groups: {
-            where: {
-              groupId: ctx.session!.user!.id,
-            },
-          },
+          groups: true,
         },
       });
     } catch (error) {
@@ -27,8 +24,7 @@ export const taskRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         const sessionGroup = ctx.session!.user!;
-        console.log(sessionGroup.id, input.id, input.status);
-        await ctx.db.groupTask.upsert({
+        const groupTask = await ctx.db.groupTask.upsert({
           where: {
             taskId_groupId: {
               taskId: input.id,
@@ -44,6 +40,7 @@ export const taskRouter = createTRPCRouter({
             status: input.status,
           },
         });
+        ee.emit("add", groupTask);
       } catch (error) {
         console.error("Error updating task status:", error);
         throw new Error("Failed to update task status");
