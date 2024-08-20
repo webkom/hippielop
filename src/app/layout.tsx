@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Abakus Hippieløp",
@@ -17,7 +18,22 @@ export default function RootLayout({
   return (
     <html lang="no" className={`${GeistSans.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <main className="flex min-h-screen flex-col items-center bg-[#ddcfaf]">
+            <div className="container flex flex-col items-center justify-center gap-3">
+              <h1 className="relative">
+                <Image
+                  src="/banner.webp"
+                  alt="Hippieløp title"
+                  width={500}
+                  height={150}
+                />
+                <div className="absolute inset-0 top-16 bg-gradient-to-t from-[#ddcfaf]" />
+              </h1>
+              {children}
+            </div>
+          </main>
+        </TRPCReactProvider>
       </body>
     </html>
   );

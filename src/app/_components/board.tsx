@@ -7,6 +7,8 @@ import Link from "next/link";
 import { type Task } from "@prisma/client";
 import { Card } from "~/app/_components/ui/card";
 import { Button } from "~/app/_components/ui/button";
+import { logout } from "~/actions/auth";
+import { RotateCwIcon } from "lucide-react";
 
 const pacifico = Pacifico({
   weight: "400",
@@ -41,13 +43,22 @@ export const Board = () => {
 
   return (
     <>
+      <Button
+        variant="outline"
+        className="absolute right-0 top-0 m-2"
+        onClick={() => logout()}
+      >
+        Logg ut
+      </Button>
       <h2 className={`${pacifico.className} text-3xl text-white drop-shadow`}>
-        Side {page}
+        {group.name} - Side {page}
       </h2>
       <Link href={pathname + (page == 1 ? "?page=2" : "")}>
-        <Button>Flipp</Button>
+        <Button>
+          <RotateCwIcon className="mr-2" size={16} />
+          Flipp
+        </Button>
       </Link>
-      {group && <p>Innlogget som {group.name}</p>}
       <div className="mx-1 flex w-full max-w-screen-md gap-1">
         {taskColumns.map((taskColumn) => (
           <div key={taskColumn.points} className="flex w-full flex-col gap-1">

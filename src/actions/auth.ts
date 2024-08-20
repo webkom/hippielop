@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "~/auth";
+import { signIn, signOut } from "~/auth";
 import { AuthError } from "next-auth";
 import type * as z from "zod";
 import { LoginSchema } from "~/shared/schemas";
@@ -38,4 +38,13 @@ export const login = async (
   }
 
   return true;
+};
+
+/**
+ * Logs out the user.
+ */
+export const logout = async (): Promise<void> => {
+  await signOut({
+    redirectTo: "/",
+  });
 };
