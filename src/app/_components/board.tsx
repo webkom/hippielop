@@ -1,34 +1,41 @@
 "use client";
 
 import { Pacifico } from "next/font/google";
-import { api } from "~/trpc/react";
+import { api, type RouterOutputs } from "~/trpc/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { type Task } from "@prisma/client";
 import { Card } from "~/app/_components/ui/card";
 import { Button } from "~/app/_components/ui/button";
 import { logout } from "~/actions/auth";
 import { RotateCwIcon } from "lucide-react";
 import { Modal } from "~/app/_components/modal";
 import { useState } from "react";
+import { type User } from "next-auth";
 
 const pacifico = Pacifico({
   weight: "400",
   subsets: ["latin"],
 });
 
+type GetAllTask = RouterOutputs["task"]["getAll"][number];
+
 interface TaskColumn {
   points: number;
-  tasks: Task[];
+  tasks: GetAllTask[];
 }
 
-export const Board = () => {
+export const Board = ({
+  tasks: initialTasks,
+  group,
+}: {
+  tasks: GetAllTask[];
+  group: User;
+}) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const page = searchParams.get("page") === "2" ? 2 : 1;
 
-  const [tasks] = api.task.getAll.useSuspenseQuery();
-  const [group] = api.group.getGroup.useSuspenseQuery();
+  const [tasks, setTasks] = useState(initialTasks);
 
   const taskColumns = tasks
     .filter((task) => task.page === page)
@@ -74,8 +81,20 @@ export const Board = () => {
   );
 };
 
-const TaskTile = ({ task }: { task: Task }) => {
+const statusStrings = {
+  started: "Påbegynt",
+  sent: "Sendt inn",
+  completed: "Fullført",
+  notStarted: "Ikke påbegynt",
+};
+
+const TaskTile = ({ task }: { task: GetAllTask }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { mutate, error, isPending } = api.task.setStatus.useMutation();
+
+  const status = task.groups[0]?.status ?? "notStarted";
+
   return (
     <>
       <Card
@@ -98,7 +117,21 @@ const TaskTile = ({ task }: { task: Task }) => {
           <p>
             <b>✨ {task.points} poeng ✨</b>
           </p>
-          <Button>Marker som fullført</Button>
+          <p>
+            <b>Status:</b> {statusStrings[status]}
+          </p>
+          <Button
+            onClick={() => mutate({ id: task.id, status: "started" })}
+            disabled={isPending}
+          >
+            Marker som påbegynt
+          </Button>
+          <Button
+            onClick={() => mutate({ id: task.id, status: "completed" })}
+            disabled={isPending}
+          >
+            Marker som fullført
+          </Button>
         </div>
       </Modal>
     </>
