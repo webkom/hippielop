@@ -43,13 +43,6 @@ export const Board = () => {
 
   return (
     <>
-      <Button
-        variant="outline"
-        className="absolute right-0 top-0 m-2"
-        onClick={() => logout()}
-      >
-        Logg ut
-      </Button>
       <h2 className={`${pacifico.className} text-3xl text-white drop-shadow`}>
         {group.name} - Side {page}
       </h2>
@@ -59,9 +52,12 @@ export const Board = () => {
           Flipp
         </Button>
       </Link>
-      <div className="mx-1 flex w-full max-w-screen-md gap-1">
+      <div className="flex w-full max-w-screen-md gap-0.5 px-1">
         {taskColumns.map((taskColumn) => (
-          <div key={taskColumn.points} className="flex w-full flex-col gap-1">
+          <div
+            key={taskColumn.points}
+            className="flex w-0 flex-grow flex-col gap-0.5"
+          >
             <div className="text-center font-bold">{taskColumn.points}</div>
             {taskColumn.tasks.map((task) => (
               <TaskTile key={task.id} task={task} />
@@ -69,14 +65,19 @@ export const Board = () => {
           </div>
         ))}
       </div>
+      <Button variant="outline" className="mt-4" onClick={() => logout()}>
+        Logg ut
+      </Button>
     </>
   );
 };
 
 const TaskTile = ({ task }: { task: Task }) => {
   return (
-    <Card className="flex aspect-square items-center justify-center overflow-hidden p-1">
-      <p className="h-auto text-center text-xs md:text-lg">{task.text}</p>
+    <Card className="flex aspect-square items-center justify-center overflow-hidden">
+      <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] md:text-lg">
+        {task.text}
+      </p>
     </Card>
   );
 };
