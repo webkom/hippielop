@@ -9,6 +9,8 @@ import { Card } from "~/app/_components/ui/card";
 import { Button } from "~/app/_components/ui/button";
 import { logout } from "~/actions/auth";
 import { RotateCwIcon } from "lucide-react";
+import { Modal } from "~/app/_components/modal";
+import { useState } from "react";
 
 const pacifico = Pacifico({
   weight: "400",
@@ -73,11 +75,32 @@ export const Board = () => {
 };
 
 const TaskTile = ({ task }: { task: Task }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
-    <Card className="flex aspect-square items-center justify-center overflow-hidden">
-      <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] md:text-lg">
-        {task.text}
-      </p>
-    </Card>
+    <>
+      <Card
+        className="flex aspect-square items-center justify-center overflow-hidden"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] md:text-lg">
+          {task.text}
+        </p>
+      </Card>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        className="w-[80vw] overflow-auto rounded-xl border-2 px-2 py-8"
+      >
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-md max-h-full max-w-full text-clip hyphens-auto text-center md:text-lg">
+            {task.text}
+          </p>
+          <p>
+            <b>✨ {task.points} poeng ✨</b>
+          </p>
+          <Button>Marker som fullført</Button>
+        </div>
+      </Modal>
+    </>
   );
 };
