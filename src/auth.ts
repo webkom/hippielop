@@ -1,4 +1,4 @@
-import NextAuth, { type User } from "next-auth";
+import NextAuth from "next-auth";
 import authConfig from "~/auth.config";
 
 export const {
@@ -6,18 +6,4 @@ export const {
   auth,
   signIn,
   signOut,
-} = NextAuth({
-  callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
-    },
-    async session({ session, token }) {
-      session.user = token as unknown as User;
-      return session;
-    },
-  },
-  ...authConfig,
-  session: {
-    strategy: "jwt",
-  },
-});
+} = NextAuth({ ...authConfig });

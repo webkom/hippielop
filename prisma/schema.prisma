@@ -24,6 +24,7 @@ model Group {
   name String
   code String
   tasks GroupTask[]
+  isAdmin Boolean @default(false)
 }
 
 model GroupTask {
