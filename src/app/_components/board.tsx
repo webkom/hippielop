@@ -174,10 +174,10 @@ const TaskTile = ({ task, groupId }: { task: GetAllTask; groupId: string }) => {
             Marker som påbegynt
           </Button>
           <Button
-            onClick={() => mutate({ id: task.id, status: "completed" })}
+            onClick={() => mutate({ id: task.id, status: "sent" })}
             disabled={isPending}
           >
-            Marker som fullført
+            Marker som innsendt
           </Button>
         </div>
       </Modal>

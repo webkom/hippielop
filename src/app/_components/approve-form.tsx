@@ -31,6 +31,7 @@ import {
 import { type Group, type Task } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { logout } from "~/actions/auth";
+import { useToast } from "~/app/_components/ui/use-toast";
 
 interface ApproveFormProps {
   groups: Group[];
@@ -40,6 +41,7 @@ interface ApproveFormProps {
 export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
   const [error, setError] = useState<string | undefined>("");
   const { mutate, isPending } = api.task.setStatus.useMutation();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof ApproveSchema>>({
     resolver: zodResolver(ApproveSchema),
@@ -52,11 +54,25 @@ export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
   const onSubmit = (data: z.infer<typeof ApproveSchema>) => {
     setError("");
     try {
-      mutate({
-        id: parseInt(data.taskId),
-        groupId: data.groupId,
-        status: "completed",
-      });
+      mutate(
+        {
+          id: parseInt(data.taskId),
+          groupId: data.groupId,
+          status: "completed",
+        },
+        {
+          onSuccess: () => {
+            toast({
+              title: "Oppgave godkjent",
+              description: "Oppgaven er nå godkjent",
+            });
+            form.reset();
+          },
+          onError: (_) => {
+            setError("An unknown error occurred");
+          },
+        },
+      );
     } catch (err) {
       const error = err as Error;
       setError(error.message || "An unknown error occurred");

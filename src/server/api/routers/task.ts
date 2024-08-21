@@ -30,11 +30,14 @@ export const taskRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         const sessionGroup = ctx.session!.user;
-        if (!sessionGroup.isAdmin && sessionGroup.id !== input.groupId) {
+        if (
+          input.groupId &&
+          !sessionGroup.isAdmin &&
+          sessionGroup.id !== input.groupId
+        ) {
           throw new Error("You do not have permission to update task status");
         }
         const groupId = input.groupId ?? sessionGroup.id;
-        console.log("groupId", groupId);
         const groupTask = await ctx.db.groupTask.upsert({
           where: {
             taskId_groupId: {
