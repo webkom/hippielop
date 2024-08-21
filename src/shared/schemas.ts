@@ -10,3 +10,8 @@ export const LoginSchema = z.object({
       message: "Kode må være 6 tegn",
     }),
 });
+
+export const ApproveSchema = z.object({
+  groupId: z.string().min(1),
+  taskId: z.string().min(1),
+});
