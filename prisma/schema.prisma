@@ -24,15 +24,18 @@ model Group {
   name String
   code String
   tasks GroupTask[]
+  isAdmin Boolean @default(false)
 }
 
 model GroupTask {
-  id Int @id @default(autoincrement())
   status Status @default(started)
   groupId String
   taskId Int
   task Task @relation(fields: [taskId], references: [id])
   group Group @relation(fields: [groupId], references: [id])
+
+  @@unique([taskId, groupId])
+  @@id([taskId, groupId])
 }
 
 enum Status {
