@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Abakus Hippieløp",
@@ -30,6 +31,17 @@ export default function RootLayout({
               <div className="absolute inset-0 top-16 bg-gradient-to-t from-[#ddcfaf]" />
             </h1>
             {children}
+            <div className="mt-auto w-full py-1 text-center">
+              <span>
+                Laget med 💕 av{" "}
+                <Link
+                  className="text-border underline"
+                  href="https://github.com/webkom/"
+                >
+                  Webkom
+                </Link>
+              </span>
+            </div>
           </main>
         </TRPCReactProvider>
       </body>
