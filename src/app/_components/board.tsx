@@ -126,7 +126,7 @@ export const Board = ({
         groups={groups}
         currentGroupId={currentGroup.id}
       />
-      <Button className="my-4 w-full max-w-screen-md" onClick={() => logout()}>
+      <Button variant="outline" className="my-4" onClick={() => logout()}>
         Logg ut
       </Button>
     </div>
