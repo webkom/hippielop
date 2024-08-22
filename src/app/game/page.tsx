@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { Board } from "~/app/_components/board";
 import { api, HydrateClient } from "~/trpc/server";
+import { Game } from "~/app/_components/game";
 
-export default async function Game() {
+export default async function GamePage() {
   const tasks = await api.task.getAll();
   const currentGroup = await api.group.getGroup();
   const groups = await api.group.getAll();
@@ -10,7 +11,7 @@ export default async function Game() {
   return (
     <HydrateClient>
       <Suspense>
-        <Board tasks={tasks} currentGroup={currentGroup} groups={groups} />
+        <Game tasks={tasks} currentGroup={currentGroup} groups={groups} />
       </Suspense>
     </HydrateClient>
   );
