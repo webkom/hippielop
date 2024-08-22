@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import { ApproveSchema } from "~/shared/schemas";
@@ -28,18 +28,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
-import { type Group, type Task } from "@prisma/client";
+import { type Group } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { logout } from "~/actions/auth";
 import { useToast } from "~/app/_components/ui/use-toast";
 import { pacifico } from "~/app/_components/board";
+import { GetAllTask, useUpdatedTasks } from "~/app/useUpdatedTasks";
 
 interface ApproveFormProps {
   groups: Group[];
-  tasks: Task[];
+  tasks: GetAllTask[];
 }
 
-export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
+const statusOrder = ["sent", "started", "notStarted", "completed"];
+const statusClassnames = {
+  sent: "bg-blue-100",
+  started: "bg-yellow-100",
+  completed: "bg-green-100",
+  notStarted: "",
+};
+
+export default function ApproveForm({
+  groups,
+  tasks: initialTasks,
+}: ApproveFormProps) {
+  const tasks = useUpdatedTasks(initialTasks);
   const [error, setError] = useState<string | undefined>("");
   const { mutate, isPending } = api.task.setStatus.useMutation();
   const { toast } = useToast();
@@ -51,6 +64,27 @@ export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
       taskId: "",
     },
   });
+
+  const selectedGroupId = form.watch("groupId");
+
+  const getTaskStatus = useCallback(
+    (task: GetAllTask) =>
+      task.groups.find((group) => group.groupId === selectedGroupId)?.status ??
+      "notStarted",
+    [selectedGroupId],
+  );
+
+  const sortedTasks = useMemo(
+    () =>
+      tasks.sort((a, b) => {
+        if (!selectedGroupId) return 0;
+
+        const aStatus = getTaskStatus(a);
+        const bStatus = getTaskStatus(b);
+        return statusOrder.indexOf(aStatus) - statusOrder.indexOf(bStatus);
+      }),
+    [getTaskStatus, selectedGroupId, tasks],
+  );
 
   const onSubmit = (data: z.infer<typeof ApproveSchema>) => {
     setError("");
@@ -81,13 +115,13 @@ export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex w-screen flex-col items-center p-2">
       <h2
         className={`${pacifico.className} my-4 text-3xl text-white drop-shadow`}
       >
         Admin
       </h2>
-      <Card>
+      <Card className="w-full max-w-screen-sm">
         <CardHeader>
           <CardTitle>Godkjenn oppgave</CardTitle>
         </CardHeader>
@@ -138,10 +172,11 @@ export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {tasks.map((task) => (
+                          {sortedTasks.map((task) => (
                             <SelectItem
                               value={task.id.toString()}
                               key={task.id}
+                              className={statusClassnames[getTaskStatus(task)]}
                             >
                               {task.text}
                             </SelectItem>

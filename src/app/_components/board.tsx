@@ -1,14 +1,14 @@
 "use client";
 
 import { Pacifico } from "next/font/google";
-import { api, type RouterOutputs } from "~/trpc/react";
-import Link from "next/link";
+import { type RouterOutputs } from "~/trpc/react";
 import { Button } from "~/app/_components/ui/button";
 import { RotateCwIcon } from "lucide-react";
 import { useState } from "react";
 import { type User } from "next-auth";
 import { TaskTile } from "~/app/_components/task-tile";
 import ReactCardFlip from "react-card-flip";
+import { useUpdatedTasks } from "~/app/useUpdatedTasks";
 
 export const pacifico = Pacifico({
   weight: "400",
@@ -27,38 +27,8 @@ interface BoardProps {
   currentGroup: User;
 }
 
-export const Board = ({ tasks: initialTasks, currentGroup }: BoardProps) => {
-  const [tasks, setTasks] = useState(initialTasks);
+export const Board = ({ tasks, currentGroup }: BoardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
-
-  api.groupTask.onGroupTaskChanged.useSubscription(undefined, {
-    onData: (groupTask) => {
-      setTasks((tasks) => {
-        return tasks.map((task) => {
-          if (task.id !== groupTask.data.taskId) {
-            return task;
-          }
-          const groupTaskContained = task.groups.some(
-            (gt) => gt.groupId === groupTask.data.groupId,
-          );
-          return {
-            ...task,
-            groups: groupTaskContained
-              ? task.groups.map((group) => {
-                  if (group.groupId !== groupTask.data.groupId) {
-                    return group;
-                  }
-                  return {
-                    ...group,
-                    status: groupTask.data.status,
-                  };
-                })
-              : [...task.groups, groupTask.data],
-          };
-        });
-      });
-    },
-  });
 
   const taskColumns = tasks
     .reduce((cols, task) => {

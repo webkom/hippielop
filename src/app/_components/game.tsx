@@ -13,6 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
+import { useUpdatedTasks } from "~/app/useUpdatedTasks";
 
 type GetAllTask = RouterOutputs["task"]["getAll"][number];
 
@@ -22,7 +23,13 @@ interface GameProps {
   groups: Group[];
 }
 
-export const Game = ({ tasks, currentGroup, groups }: GameProps) => {
+export const Game = ({
+  tasks: initialTasks,
+  currentGroup,
+  groups,
+}: GameProps) => {
+  const tasks = useUpdatedTasks(initialTasks);
+
   return (
     <div className="mt-4 flex w-full flex-col items-center">
       <div className="flex w-full max-w-screen-md flex-col items-center px-3">
