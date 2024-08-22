@@ -40,7 +40,7 @@ export const Scoreboard = ({
         Poengtavle
       </h2>
       <div
-        className="grid w-full flex-col gap-y-2 px-2"
+        className="grid w-full max-w-screen-md flex-col gap-y-2"
         style={{
           gridTemplateColumns: "auto auto 1fr",
         }}

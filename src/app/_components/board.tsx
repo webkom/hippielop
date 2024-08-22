@@ -83,7 +83,7 @@ export const Board = ({
     .sort((a, b) => a.points - b.points);
 
   return (
-    <>
+    <div className="flex w-full flex-col items-center px-3">
       <h2
         className={`${pacifico.className} my-4 text-3xl text-white drop-shadow`}
       >
@@ -95,16 +95,20 @@ export const Board = ({
           Flipp
         </Button>
       </Link>
-      <div className="my-4 flex w-full max-w-screen-md gap-0.5 px-1">
+      <div className="my-4 flex w-full max-w-screen-md gap-0 md:gap-1">
         {taskColumns.map((taskColumn) => (
           <div
             key={taskColumn.points}
-            className="flex w-0 flex-grow flex-col gap-0.5"
+            className="group flex w-0 flex-grow flex-col"
           >
-            <div className="text-center font-bold">{taskColumn.points}</div>
-            {taskColumn.tasks.map((task) => (
-              <TaskTile key={task.id} task={task} groupId={currentGroup.id} />
-            ))}
+            <div className="mb-2 text-center font-bold">
+              {taskColumn.points}
+            </div>
+            <div className="flex flex-col gap-0 md:gap-1">
+              {taskColumn.tasks.map((task) => (
+                <TaskTile key={task.id} task={task} groupId={currentGroup.id} />
+              ))}
+            </div>
           </div>
         ))}
       </div>
@@ -113,10 +117,10 @@ export const Board = ({
         groups={groups}
         currentGroupId={currentGroup.id}
       />
-      <Button variant="outline" className="my-4" onClick={() => logout()}>
+      <Button className="my-4 w-full max-w-screen-md" onClick={() => logout()}>
         Logg ut
       </Button>
-    </>
+    </div>
   );
 };
 
@@ -128,9 +132,9 @@ const statusStrings = {
 };
 
 const statusClassName = {
-  started: "bg-yellow-300 ",
-  sent: "bg-blue-300",
-  completed: "bg-green-400 border-green-800",
+  started: "bg-yellow-300 md:border-yellow-700",
+  sent: "bg-blue-300 md:border-blue-700",
+  completed: "bg-green-300 md:border-green-700",
   notStarted: "bg-card",
 };
 
@@ -145,10 +149,11 @@ const TaskTile = ({ task, groupId }: { task: GetAllTask; groupId: string }) => {
   return (
     <>
       <Card
-        className={`flex aspect-square items-center justify-center overflow-hidden ${statusClassName[status]}`}
+        // Use tailwind they said, it's easy they said
+        className={`flex aspect-square items-center justify-center overflow-hidden rounded-none border-0 border-r-2 border-t-2 p-1 group-first:border-l-2 first:group-first:rounded-tl-lg first:group-last:rounded-tr-lg md:rounded-lg md:border-2 [&:nth-last-child(2)]:border-b-2 [&:nth-last-child(2)]:group-first:rounded-bl-lg [&:nth-last-child(2)]:group-last:rounded-br-lg ${statusClassName[status]}`}
         onClick={() => setIsModalOpen(true)}
       >
-        <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] md:text-lg">
+        <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] sm:text-sm md:text-lg">
           {task.text}
         </p>
       </Card>
