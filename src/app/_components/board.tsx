@@ -8,11 +8,20 @@ import { Card } from "~/app/_components/ui/card";
 import { Button } from "~/app/_components/ui/button";
 import { logout } from "~/actions/auth";
 import { RotateCwIcon } from "lucide-react";
-import { Modal } from "~/app/_components/modal";
 import { useState } from "react";
 import { type User } from "next-auth";
 import { Scoreboard } from "./scoreboard";
 import { type Group } from "@prisma/client";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "~/app/_components/ui/drawer";
 
 export const pacifico = Pacifico({
   weight: "400",
@@ -139,53 +148,53 @@ const statusClassName = {
 };
 
 const TaskTile = ({ task, groupId }: { task: GetAllTask; groupId: string }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const { mutate, isPending } = api.task.setStatus.useMutation();
 
   const status =
     task.groups.find((g) => g.groupId === groupId)?.status ?? "notStarted";
 
   return (
-    <>
-      <Card
-        // Use tailwind they said, it's easy they said
-        className={`flex aspect-square items-center justify-center overflow-hidden rounded-none border-0 border-r-2 border-t-2 p-1 group-first:border-l-2 first:group-first:rounded-tl-lg first:group-last:rounded-tr-lg md:rounded-lg md:border-2 [&:nth-last-child(2)]:border-b-2 [&:nth-last-child(2)]:group-first:rounded-bl-lg [&:nth-last-child(2)]:group-last:rounded-br-lg ${statusClassName[status]}`}
-        onClick={() => setIsModalOpen(true)}
-      >
-        <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] sm:text-sm md:text-lg">
-          {task.text}
-        </p>
-      </Card>
-      <Modal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        className="w-[80vw] overflow-auto rounded-xl border-2 px-2 py-8"
-      >
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-md max-h-full max-w-full text-clip hyphens-auto text-center md:text-lg">
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Card
+          // Use tailwind they said, it's easy they said
+          className={`flex aspect-square items-center justify-center overflow-hidden rounded-none border-0 border-r-2 border-t-2 p-1 last:border-b-2 group-first:border-l-2 first:group-first:rounded-tl-lg last:group-first:rounded-bl-lg first:group-last:rounded-tr-lg last:group-last:rounded-br-lg md:rounded-lg md:border-2 ${statusClassName[status]}`}
+        >
+          <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] sm:text-sm md:text-lg">
             {task.text}
           </p>
-          <p>
-            <b>✨ {task.points} poeng ✨</b>
-          </p>
-          <p>
-            <b>Status:</b> {statusStrings[status]}
-          </p>
-          <Button
-            onClick={() => mutate({ id: task.id, status: "started" })}
-            disabled={isPending}
-          >
-            Marker som påbegynt
-          </Button>
-          <Button
-            onClick={() => mutate({ id: task.id, status: "completed" })}
-            disabled={isPending}
-          >
-            Marker som fullført
-          </Button>
+        </Card>
+      </DrawerTrigger>
+      <DrawerContent>
+        <div className="mx-auto w-full max-w-xl">
+          <DrawerHeader>
+            <DrawerTitle className="text-center">{task.text}</DrawerTitle>
+            <DrawerDescription className="text-center">
+              ✨ {task.points} poeng ✨
+              <br />
+              Status: {statusStrings[status]}
+            </DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button
+                onClick={() => mutate({ id: task.id, status: "started" })}
+                disabled={isPending}
+              >
+                Marker som påbegynt
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button
+                onClick={() => mutate({ id: task.id, status: "completed" })}
+                disabled={isPending}
+              >
+                Marker som fullført
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
         </div>
-      </Modal>
-    </>
+      </DrawerContent>
+    </Drawer>
   );
 };
