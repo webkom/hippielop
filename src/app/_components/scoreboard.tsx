@@ -33,14 +33,14 @@ export const Scoreboard = ({
   const maxScore = scores[0]?.[1] ?? 0;
 
   return (
-    <>
+    <div className="flex flex-col items-center">
       <h2
-        className={`${pacifico.className} my-4 text-3xl text-white drop-shadow`}
+        className={`${pacifico.className} my-8 text-3xl text-white drop-shadow`}
       >
         Poengtavle
       </h2>
       <div
-        className="grid w-full max-w-screen-md flex-col gap-y-2"
+        className="grid w-full flex-col gap-y-2"
         style={{
           gridTemplateColumns: "auto auto 1fr",
         }}
@@ -55,7 +55,7 @@ export const Scoreboard = ({
           />
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -76,9 +76,9 @@ export const Board = ({ tasks: initialTasks, currentGroup }: BoardProps) => {
     .sort((a, b) => a.points - b.points);
 
   return (
-    <div className="flex w-full flex-col items-center px-3">
+    <div className="flex flex-col items-center">
       <h2
-        className={`${pacifico.className} my-4 text-3xl text-white drop-shadow`}
+        className={`${pacifico.className} my-8 text-3xl text-white drop-shadow`}
       >
         {currentGroup.name} - Side {page}
       </h2>
@@ -88,13 +88,13 @@ export const Board = ({ tasks: initialTasks, currentGroup }: BoardProps) => {
           Flipp
         </Button>
       </Link>
-      <div className="my-4 flex w-full max-w-screen-md gap-0 md:gap-1">
+      <div className="my-4 flex w-full gap-0 md:gap-1">
         {taskColumns.map((taskColumn) => (
           <div
             key={taskColumn.points}
             className="group flex w-0 flex-grow flex-col"
           >
-            <div className="mb-2 text-center font-bold">
+            <div className="mb-2 text-center font-bold text-muted-foreground">
               {taskColumn.points}
             </div>
             <div className="flex flex-col gap-0 md:gap-1">
