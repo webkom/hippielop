@@ -166,6 +166,8 @@ const TaskTile = ({ task, groupId }: { task: GetAllTask; groupId: string }) => {
             <DrawerTitle className="text-center">{task.text}</DrawerTitle>
             <DrawerDescription className="text-center">
               ✨ {task.points} poeng ✨
+              <br />
+              Status: {statusStrings[status]}
             </DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
