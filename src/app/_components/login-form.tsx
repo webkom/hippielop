@@ -58,7 +58,9 @@ export default function LoginForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Oppgi koden til din faddergruppe</CardTitle>
+        <CardTitle className="text-center">
+          Oppgi koden til din faddergruppe
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
