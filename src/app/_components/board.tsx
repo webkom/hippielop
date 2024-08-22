@@ -2,13 +2,13 @@
 
 import { Pacifico } from "next/font/google";
 import { api, type RouterOutputs } from "~/trpc/react";
-import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "~/app/_components/ui/button";
 import { RotateCwIcon } from "lucide-react";
 import { useState } from "react";
 import { type User } from "next-auth";
 import { TaskTile } from "~/app/_components/task-tile";
+import ReactCardFlip from "react-card-flip";
 
 export const pacifico = Pacifico({
   weight: "400",
@@ -29,9 +29,7 @@ interface BoardProps {
 
 export const Board = ({ tasks: initialTasks, currentGroup }: BoardProps) => {
   const [tasks, setTasks] = useState(initialTasks);
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const page = searchParams.get("page") === "2" ? 2 : 1;
+  const [isFlipped, setIsFlipped] = useState(false);
 
   api.groupTask.onGroupTaskChanged.useSubscription(undefined, {
     onData: (groupTask) => {
@@ -63,7 +61,6 @@ export const Board = ({ tasks: initialTasks, currentGroup }: BoardProps) => {
   });
 
   const taskColumns = tasks
-    .filter((task) => task.page === page)
     .reduce((cols, task) => {
       const col = cols.find((col) => col.points === task.points);
       if (!col) {
@@ -76,34 +73,71 @@ export const Board = ({ tasks: initialTasks, currentGroup }: BoardProps) => {
     .sort((a, b) => a.points - b.points);
 
   return (
+    <ReactCardFlip containerClassName="w-full" isFlipped={isFlipped}>
+      <Page
+        onFlip={() => setIsFlipped(!isFlipped)}
+        taskColumns={taskColumns}
+        currentGroup={currentGroup}
+        page={1}
+      />
+      <Page
+        onFlip={() => setIsFlipped(!isFlipped)}
+        taskColumns={taskColumns}
+        currentGroup={currentGroup}
+        page={2}
+      />
+    </ReactCardFlip>
+  );
+};
+
+const Page = ({
+  taskColumns,
+  currentGroup,
+  page,
+  onFlip,
+}: {
+  taskColumns: TaskColumn[];
+  currentGroup: User;
+  page: number;
+  onFlip: () => void;
+}) => {
+  return (
     <div className="flex flex-col items-center">
       <h2
         className={`${pacifico.className} my-8 text-3xl text-white drop-shadow`}
       >
         {currentGroup.name} - Side {page}
       </h2>
-      <Link href={pathname + (page == 1 ? "?page=2" : "")}>
-        <Button>
-          <RotateCwIcon className="mr-2" size={16} />
-          Flipp
-        </Button>
-      </Link>
+      <Button onClick={onFlip}>
+        <RotateCwIcon className="mr-2" size={16} />
+        Flipp
+      </Button>
+
       <div className="my-4 flex w-full gap-0 md:gap-1">
-        {taskColumns.map((taskColumn) => (
-          <div
-            key={taskColumn.points}
-            className="group flex w-0 flex-grow flex-col"
-          >
-            <div className="mb-2 text-center font-bold text-muted-foreground">
-              {taskColumn.points}
+        {taskColumns
+          .map((taskColumn) => ({
+            ...taskColumn,
+            tasks: taskColumn.tasks.filter((task) => task.page === page),
+          }))
+          .map((taskColumn) => (
+            <div
+              key={taskColumn.points}
+              className="group flex w-0 flex-grow flex-col"
+            >
+              <div className="mb-2 text-center font-bold text-muted-foreground">
+                {taskColumn.points}
+              </div>
+              <div className="flex flex-col gap-0 md:gap-1">
+                {taskColumn.tasks.map((task) => (
+                  <TaskTile
+                    key={task.id}
+                    task={task}
+                    groupId={currentGroup.id}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="flex flex-col gap-0 md:gap-1">
-              {taskColumn.tasks.map((task) => (
-                <TaskTile key={task.id} task={task} groupId={currentGroup.id} />
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
