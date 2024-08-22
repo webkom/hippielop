@@ -37,6 +37,9 @@ export const taskRouter = createTRPCRouter({
         ) {
           throw new Error("You do not have permission to update task status");
         }
+        if (!sessionGroup.isAdmin && input.status === "completed") {
+          throw new Error("You do not have permission to update task status");
+        }
         const groupId = input.groupId ?? sessionGroup.id;
         const groupTask = await ctx.db.groupTask.upsert({
           where: {
