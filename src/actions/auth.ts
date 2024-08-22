@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "~/auth";
+import { signIn, signOut } from "~/server/auth";
 import { AuthError } from "next-auth";
 import type * as z from "zod";
 import { LoginSchema } from "~/shared/schemas";

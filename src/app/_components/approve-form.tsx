@@ -32,6 +32,7 @@ import { type Group, type Task } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { logout } from "~/actions/auth";
 import { useToast } from "~/app/_components/ui/use-toast";
+import { pacifico } from "~/app/_components/board";
 
 interface ApproveFormProps {
   groups: Group[];
@@ -81,6 +82,11 @@ export default function ApproveForm({ groups, tasks }: ApproveFormProps) {
 
   return (
     <div className="flex flex-col items-center">
+      <h2
+        className={`${pacifico.className} my-4 text-3xl text-white drop-shadow`}
+      >
+        Admin
+      </h2>
       <Card>
         <CardHeader>
           <CardTitle>Godkjenn oppgave</CardTitle>

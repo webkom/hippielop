@@ -8,7 +8,6 @@ export default async function AdminPage() {
 
   return (
     <div>
-      <h1 className="my-4 text-center">Admin</h1>
       <ApproveForm groups={groups} tasks={tasks} />
       <Toaster />
     </div>
