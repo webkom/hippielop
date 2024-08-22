@@ -186,10 +186,10 @@ const TaskTile = ({ task, groupId }: { task: GetAllTask; groupId: string }) => {
             </DrawerClose>
             <DrawerClose asChild>
               <Button
-                onClick={() => mutate({ id: task.id, status: "completed" })}
+                onClick={() => mutate({ id: task.id, status: "sent" })}
                 disabled={isPending}
               >
-                Marker som fullført
+                Marker som innsendt
               </Button>
             </DrawerClose>
           </DrawerFooter>

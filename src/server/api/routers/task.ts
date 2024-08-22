@@ -20,15 +20,32 @@ export const taskRouter = createTRPCRouter({
   }),
 
   setStatus: publicProcedure
-    .input(z.object({ id: z.number(), status: z.nativeEnum(Status) }))
+    .input(
+      z.object({
+        id: z.number(),
+        status: z.nativeEnum(Status),
+        groupId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
-        const sessionGroup = ctx.session!.user!;
+        const sessionGroup = ctx.session!.user;
+        if (
+          input.groupId &&
+          !sessionGroup.isAdmin &&
+          sessionGroup.id !== input.groupId
+        ) {
+          throw new Error("You do not have permission to update task status");
+        }
+        if (!sessionGroup.isAdmin && input.status === "completed") {
+          throw new Error("You do not have permission to update task status");
+        }
+        const groupId = input.groupId ?? sessionGroup.id;
         const groupTask = await ctx.db.groupTask.upsert({
           where: {
             taskId_groupId: {
               taskId: input.id,
-              groupId: sessionGroup.id,
+              groupId: groupId,
             },
           },
           update: {
@@ -36,7 +53,7 @@ export const taskRouter = createTRPCRouter({
           },
           create: {
             taskId: input.id,
-            groupId: sessionGroup.id,
+            groupId: groupId,
             status: input.status,
           },
         });
