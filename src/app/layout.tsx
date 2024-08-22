@@ -31,7 +31,7 @@ export default function RootLayout({
               <div className="absolute inset-0 top-16 bg-gradient-to-t from-[#ddcfaf]" />
             </h1>
             {children}
-            <div className="mt-auto w-full py-1 text-center">
+            <div className="mt-auto w-full py-2 text-center">
               <span>
                 Laget med 💕 av{" "}
                 <Link
