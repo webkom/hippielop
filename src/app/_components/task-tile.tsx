@@ -12,12 +12,13 @@ import {
 import { Card } from "~/app/_components/ui/card";
 import { Status } from "@prisma/client";
 import { ButtonGroup } from "~/app/_components/button-group";
+import { useRef, useState } from "react";
 
 const statusClassName = {
-  started: "bg-yellow-300 md:border-yellow-700",
-  sent: "bg-blue-300 md:border-blue-700",
-  completed: "bg-green-300 md:border-green-700",
-  notStarted: "bg-card",
+  started: "bg-yellow-300 md:border-yellow-700 after:to-yellow-300",
+  sent: "bg-blue-300 md:border-blue-700 after:to-blue-300",
+  completed: "bg-green-300 md:border-green-700 after:to-green-300",
+  notStarted: "bg-card after:to-card",
 };
 
 type GetAllTask = RouterOutputs["task"]["getAll"][number];
@@ -29,6 +30,12 @@ interface TaskTileProps {
 
 export const TaskTile = ({ task, groupId }: TaskTileProps) => {
   const { mutate, isPending } = api.task.setStatus.useMutation();
+  const [textElement, setTextElement] = useState<HTMLParagraphElement | null>(
+    null,
+  );
+  const overflowing = textElement
+    ? textElement.scrollHeight > textElement.clientHeight
+    : true;
 
   const status =
     task.groups.find((g) => g.groupId === groupId)?.status ?? Status.notStarted;
@@ -38,9 +45,12 @@ export const TaskTile = ({ task, groupId }: TaskTileProps) => {
       <DrawerTrigger asChild>
         <Card
           // Use tailwind they said, it's easy they said
-          className={`flex aspect-square items-center justify-center overflow-hidden rounded-none border-0 border-r-2 border-t-2 p-1 last:border-b-2 group-first:border-l-2 first:group-first:rounded-tl-lg last:group-first:rounded-bl-lg first:group-last:rounded-tr-lg last:group-last:rounded-br-lg md:rounded-lg md:border-2 ${statusClassName[status]}`}
+          className={`flex aspect-square items-center justify-center overflow-hidden rounded-none border-0 border-r-2 border-t-2 p-1 last:border-b-2 group-first:border-l-2 first:group-first:rounded-tl-lg last:group-first:rounded-bl-lg first:group-last:rounded-tr-lg last:group-last:rounded-br-lg md:rounded-lg md:border-2 ${statusClassName[status]} ${overflowing ? "relative after:absolute after:inset-x-0 after:bottom-0 after:h-6 after:bg-gradient-to-b after:from-transparent after:content-['']" : ""}`}
         >
-          <p className="max-h-full max-w-full text-clip hyphens-auto text-center text-[8px] sm:text-sm md:text-lg">
+          <p
+            ref={setTextElement}
+            className="max-h-full max-w-full text-clip hyphens-auto text-center text-[9px] sm:text-sm md:text-lg"
+          >
             {task.text}
           </p>
         </Card>
