@@ -34,6 +34,7 @@ import { logout } from "~/actions/auth";
 import { useToast } from "~/app/_components/ui/use-toast";
 import { pacifico } from "~/app/_components/board";
 import { type GetAllTask, useUpdatedTasks } from "~/app/useUpdatedTasks";
+import { ColorCode } from "~/app/_components/color-code";
 
 interface ApproveFormProps {
   groups: Group[];
@@ -196,6 +197,7 @@ export default function ApproveForm({
           </Form>
         </CardContent>
       </Card>
+      <ColorCode />
       <Button variant="outline" className="my-4" onClick={() => logout()}>
         Logg ut
       </Button>

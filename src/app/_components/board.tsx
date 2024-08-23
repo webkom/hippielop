@@ -8,6 +8,7 @@ import { useState } from "react";
 import { type User } from "next-auth";
 import { TaskTile } from "~/app/_components/task-tile";
 import ReactCardFlip from "react-card-flip";
+import { ColorCode } from "~/app/_components/color-code";
 
 export const pacifico = Pacifico({
   weight: "400",
@@ -42,20 +43,23 @@ export const Board = ({ tasks, currentGroup }: BoardProps) => {
     .sort((a, b) => a.points - b.points);
 
   return (
-    <ReactCardFlip containerClassName="w-full" isFlipped={isFlipped}>
-      <Page
-        onFlip={() => setIsFlipped(!isFlipped)}
-        taskColumns={taskColumns}
-        currentGroup={currentGroup}
-        page={1}
-      />
-      <Page
-        onFlip={() => setIsFlipped(!isFlipped)}
-        taskColumns={taskColumns}
-        currentGroup={currentGroup}
-        page={2}
-      />
-    </ReactCardFlip>
+    <>
+      <ReactCardFlip containerClassName="w-full" isFlipped={isFlipped}>
+        <Page
+          onFlip={() => setIsFlipped(!isFlipped)}
+          taskColumns={taskColumns}
+          currentGroup={currentGroup}
+          page={1}
+        />
+        <Page
+          onFlip={() => setIsFlipped(!isFlipped)}
+          taskColumns={taskColumns}
+          currentGroup={currentGroup}
+          page={2}
+        />
+      </ReactCardFlip>
+      <ColorCode />
+    </>
   );
 };
 
