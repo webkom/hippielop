@@ -1,10 +1,8 @@
 "use client";
 
-import { type RouterOutputs } from "~/trpc/react";
 import { Group } from "@prisma/client";
 import { pacifico } from "./board";
-
-type GetAllTask = RouterOutputs["task"]["getAll"][number];
+import { GetAllTask } from "~/app/useUpdatedTasks";
 
 export const Scoreboard = ({
   tasks,
