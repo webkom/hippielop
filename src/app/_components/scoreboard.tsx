@@ -1,8 +1,15 @@
 "use client";
 
-import { Group } from "@prisma/client";
+import { type Group } from "@prisma/client";
 import { pacifico } from "./board";
-import { GetAllTask } from "~/app/useUpdatedTasks";
+import { type GetAllTask } from "~/app/useUpdatedTasks";
+
+const scoreboardColors = [
+  { border: "border-[#f6b815]", bg: "bg-[#f6b815]" },
+  { border: "border-[#2f914d]", bg: "bg-[#2f914d]" },
+  { border: "border-[#d673b2]", bg: "bg-[#d673b2]" },
+  { border: "border-[#eb5a21]", bg: "bg-[#eb5a21]" },
+];
 
 export const Scoreboard = ({
   tasks,
@@ -43,13 +50,14 @@ export const Scoreboard = ({
           gridTemplateColumns: "auto auto 1fr",
         }}
       >
-        {scores.map(([groupId, score]) => (
+        {scores.map(([groupId, score], index) => (
           <ScoreboardEntry
             key={groupId}
             group={groups.find((g) => g.id === groupId)!}
             score={score}
             maxScore={maxScore}
             isCurrentGroup={currentGroupId === groupId}
+            colors={scoreboardColors[index % scoreboardColors.length]!}
           />
         ))}
       </div>
@@ -62,27 +70,32 @@ const ScoreboardEntry = ({
   score,
   maxScore,
   isCurrentGroup,
+  colors,
 }: {
   group: Group;
   score: number;
   maxScore: number;
   isCurrentGroup: boolean;
+  colors: {
+    border: string;
+    bg: string;
+  };
 }) => {
   return (
     <>
       <div
-        className={`flex items-center rounded-l border-2 border-r-0 border-amber-900 px-1 ${isCurrentGroup ? "bg-amber-200" : ""}`}
+        className={`flex items-center rounded-l border-2 border-r-0 px-1 ${isCurrentGroup ? "bg-amber-100" : ""} ${colors.border}`}
       >
         {group.name}
       </div>
       <div
-        className={`flex items-center border-2 border-l-0 border-amber-900 px-2 ${isCurrentGroup ? "bg-amber-200" : ""}`}
+        className={`flex items-center border-2 border-l-0 px-2 ${isCurrentGroup ? "bg-amber-100" : ""} ${colors.border}`}
       >
         {score}
       </div>
       <div className="h-10 flex-grow">
         <div
-          className="h-full rounded-r bg-amber-900"
+          className={`h-full rounded-r ${colors.bg}`}
           style={{
             width: `${(score / maxScore) * 100}%`,
           }}

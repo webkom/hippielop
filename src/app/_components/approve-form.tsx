@@ -33,7 +33,7 @@ import { api } from "~/trpc/react";
 import { logout } from "~/actions/auth";
 import { useToast } from "~/app/_components/ui/use-toast";
 import { pacifico } from "~/app/_components/board";
-import { GetAllTask, useUpdatedTasks } from "~/app/useUpdatedTasks";
+import { type GetAllTask, useUpdatedTasks } from "~/app/useUpdatedTasks";
 
 interface ApproveFormProps {
   groups: Group[];
