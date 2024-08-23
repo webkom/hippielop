@@ -138,7 +138,7 @@ export default function ApproveForm({
                       <FormLabel>Gruppe</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -165,7 +165,7 @@ export default function ApproveForm({
                       <FormLabel>Oppgave</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
