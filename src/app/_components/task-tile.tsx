@@ -10,14 +10,8 @@ import {
   DrawerTrigger,
 } from "~/app/_components/ui/drawer";
 import { Card } from "~/app/_components/ui/card";
-import { Button } from "~/app/_components/ui/button";
-
-const statusStrings = {
-  started: "Påbegynt",
-  sent: "Sendt inn",
-  completed: "Fullført",
-  notStarted: "Ikke påbegynt",
-};
+import { Status } from "@prisma/client";
+import { ButtonGroup } from "~/app/_components/button-group";
 
 const statusClassName = {
   started: "bg-yellow-300 md:border-yellow-700",
@@ -37,7 +31,7 @@ export const TaskTile = ({ task, groupId }: TaskTileProps) => {
   const { mutate, isPending } = api.task.setStatus.useMutation();
 
   const status =
-    task.groups.find((g) => g.groupId === groupId)?.status ?? "notStarted";
+    task.groups.find((g) => g.groupId === groupId)?.status ?? Status.notStarted;
 
   return (
     <Drawer>
@@ -54,29 +48,45 @@ export const TaskTile = ({ task, groupId }: TaskTileProps) => {
       <DrawerContent>
         <div className="mx-auto w-full max-w-xl">
           <DrawerHeader>
-            <DrawerTitle className="text-center">{task.text}</DrawerTitle>
-            <DrawerDescription className="text-center">
+            <DrawerTitle className="line mb-6 text-center leading-8">
+              {task.text}
+            </DrawerTitle>
+            <DrawerDescription className="mb-6 text-center text-lg">
               ✨ {task.points} poeng ✨
-              <br />
-              Status: {statusStrings[status]}
             </DrawerDescription>
           </DrawerHeader>
-          <DrawerFooter>
+          <DrawerFooter className="mb-10 flex items-center">
             <DrawerClose asChild>
-              <Button
-                onClick={() => mutate({ id: task.id, status: "started" })}
-                disabled={isPending}
-              >
-                Marker som påbegynt
-              </Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button
-                onClick={() => mutate({ id: task.id, status: "sent" })}
-                disabled={isPending}
-              >
-                Marker som innsendt
-              </Button>
+              <ButtonGroup
+                value={status}
+                onValueChange={(value) => {
+                  mutate({ id: task.id, status: value });
+                }}
+                items={[
+                  {
+                    value: Status.notStarted,
+                    label: "Ikke gjort",
+                    disabled: isPending || status === Status.completed,
+                  },
+                  {
+                    value: Status.started,
+                    label: "Påbegynt",
+                    disabled: isPending || status === Status.completed,
+                  },
+                  {
+                    value: Status.sent,
+                    label: "Sendt inn",
+                    selectedClassName: "bg-blue-500 hover:bg-blue-500/90",
+                    disabled: isPending || status === Status.completed,
+                  },
+                  {
+                    value: Status.completed,
+                    label: "Godkjent",
+                    selectedClassName: "bg-green-500 hover:bg-green-500/90",
+                    disabled: isPending || status !== Status.completed,
+                  },
+                ]}
+              />
             </DrawerClose>
           </DrawerFooter>
         </div>

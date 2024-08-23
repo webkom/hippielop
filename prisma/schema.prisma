@@ -39,6 +39,7 @@ model GroupTask {
 }
 
 enum Status {
+  notStarted
   started
   sent
   completed
