@@ -24,9 +24,7 @@ export const Scoreboard = ({
     (acc, task) => {
       task.groups.forEach((group) => {
         if (group.status !== "completed") return;
-        if (!acc[group.groupId]) {
-          acc[group.groupId] = 0;
-        }
+        if (!acc[group.groupId]) acc[group.groupId] = 0;
         acc[group.groupId]! += task.points;
       });
       return acc;
@@ -34,8 +32,15 @@ export const Scoreboard = ({
     {} as Record<string, number>,
   );
 
-  const scores = Object.entries(teamScores).sort((a, b) => b[1] - a[1]);
-  const maxScore = scores[0]?.[1] ?? 0;
+  const groupsWithScore = groups
+    .filter((group) => !group.isAdmin)
+    .map((group) => ({
+      ...group,
+      score: teamScores[group.id] ?? 0,
+    }))
+    .sort((a, b) => b.score - a.score);
+
+  const maxScore = groupsWithScore[0]?.score ?? 0;
 
   return (
     <div className="flex flex-col items-center">
@@ -50,13 +55,13 @@ export const Scoreboard = ({
           gridTemplateColumns: "auto auto 1fr",
         }}
       >
-        {scores.map(([groupId, score], index) => (
+        {groupsWithScore.map((group, index) => (
           <ScoreboardEntry
-            key={groupId}
-            group={groups.find((g) => g.id === groupId)!}
-            score={score}
+            key={group.id}
+            group={group}
+            score={group.score}
             maxScore={maxScore}
-            isCurrentGroup={currentGroupId === groupId}
+            isCurrentGroup={currentGroupId === group.id}
             colors={scoreboardColors[index % scoreboardColors.length]!}
           />
         ))}
