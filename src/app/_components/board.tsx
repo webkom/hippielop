@@ -8,7 +8,6 @@ import { useState } from "react";
 import { type User } from "next-auth";
 import { TaskTile } from "~/app/_components/task-tile";
 import ReactCardFlip from "react-card-flip";
-import { useUpdatedTasks } from "~/app/useUpdatedTasks";
 
 export const pacifico = Pacifico({
   weight: "400",

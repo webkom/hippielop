@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { Board } from "~/app/_components/board";
 import { api, HydrateClient } from "~/trpc/server";
 import { Game } from "~/app/_components/game";
 

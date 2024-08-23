@@ -1,4 +1,4 @@
-import { api, RouterOutputs } from "~/trpc/react";
+import { api, type RouterOutputs } from "~/trpc/react";
 import { useState } from "react";
 
 export type GetAllTask = RouterOutputs["task"]["getAll"][number];
