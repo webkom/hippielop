@@ -1,5 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { boardOpensDate } from "~/shared/config";
+import { boardClosesDate, boardOpensDate } from "~/shared/config";
 import { z } from "zod";
 import { Status } from "@prisma/client";
 import { ee } from "./group-task";
@@ -39,6 +39,9 @@ export const taskRouter = createTRPCRouter({
         }
         if (!sessionGroup.isAdmin && input.status === "completed") {
           throw new Error("You do not have permission to update task status");
+        }
+        if (!sessionGroup.isAdmin && new Date() > boardClosesDate) {
+          throw new Error("Board is closed");
         }
         const groupId = input.groupId ?? sessionGroup.id;
         const groupTask = await ctx.db.groupTask.upsert({

@@ -4,11 +4,12 @@ import { Pacifico } from "next/font/google";
 import { type RouterOutputs } from "~/trpc/react";
 import { Button } from "~/app/_components/ui/button";
 import { RotateCwIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type User } from "next-auth";
 import { TaskTile } from "~/app/_components/task-tile";
 import ReactCardFlip from "react-card-flip";
 import { ColorCode } from "~/app/_components/color-code";
+import { boardClosesDate } from "~/shared/config";
 
 export const pacifico = Pacifico({
   weight: "400",
@@ -30,6 +31,15 @@ interface BoardProps {
 export const Board = ({ tasks, currentGroup }: BoardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
+  const [isClosed, setIsClosed] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsClosed(true);
+    }, boardClosesDate.getTime() - new Date().getTime());
+    return () => clearTimeout(timeout);
+  }, []);
+
   const taskColumns = tasks
     .reduce((cols, task) => {
       const col = cols.find((col) => col.points === task.points);
@@ -49,12 +59,14 @@ export const Board = ({ tasks, currentGroup }: BoardProps) => {
           onFlip={() => setIsFlipped(!isFlipped)}
           taskColumns={taskColumns}
           currentGroup={currentGroup}
+          isClosed={isClosed}
           page={1}
         />
         <Page
           onFlip={() => setIsFlipped(!isFlipped)}
           taskColumns={taskColumns}
           currentGroup={currentGroup}
+          isClosed={isClosed}
           page={2}
         />
       </ReactCardFlip>
@@ -67,11 +79,13 @@ const Page = ({
   taskColumns,
   currentGroup,
   page,
+  isClosed,
   onFlip,
 }: {
   taskColumns: TaskColumn[];
   currentGroup: User;
   page: number;
+  isClosed: boolean;
   onFlip: () => void;
 }) => {
   return (
@@ -85,6 +99,12 @@ const Page = ({
         <RotateCwIcon className="mr-2" size={16} />
         Flipp
       </Button>
+
+      {isClosed && (
+        <div className="my-4 rounded-full border-2 bg-red-500 p-2 text-lg text-white">
+          Konkurransen er over og det er ikke mulig å gjøre flere oppgaver.
+        </div>
+      )}
 
       <div className="my-4 flex w-full gap-0 md:gap-1">
         {taskColumns
@@ -105,6 +125,7 @@ const Page = ({
                   <TaskTile
                     key={task.id}
                     task={task}
+                    isClosed={isClosed}
                     groupId={currentGroup.id}
                   />
                 ))}

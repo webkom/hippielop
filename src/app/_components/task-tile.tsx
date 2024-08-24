@@ -26,9 +26,10 @@ type GetAllTask = RouterOutputs["task"]["getAll"][number];
 interface TaskTileProps {
   task: GetAllTask;
   groupId: string;
+  isClosed: boolean;
 }
 
-export const TaskTile = ({ task, groupId }: TaskTileProps) => {
+export const TaskTile = ({ task, groupId, isClosed }: TaskTileProps) => {
   const { mutate, isPending } = api.task.setStatus.useMutation();
   const [textElement, setTextElement] = useState<HTMLParagraphElement | null>(
     null,
@@ -76,24 +77,28 @@ export const TaskTile = ({ task, groupId }: TaskTileProps) => {
                   {
                     value: Status.notStarted,
                     label: "Ikke gjort",
-                    disabled: isPending || status === Status.completed,
+                    disabled:
+                      isClosed || isPending || status === Status.completed,
                   },
                   {
                     value: Status.started,
                     label: "Påbegynt",
-                    disabled: isPending || status === Status.completed,
+                    disabled:
+                      isClosed || isPending || status === Status.completed,
                   },
                   {
                     value: Status.sent,
                     label: "Sendt inn",
                     selectedClassName: "bg-blue-500 hover:bg-blue-500/90",
-                    disabled: isPending || status === Status.completed,
+                    disabled:
+                      isClosed || isPending || status === Status.completed,
                   },
                   {
                     value: Status.completed,
                     label: "Godkjent",
                     selectedClassName: "bg-green-500 hover:bg-green-500/90",
-                    disabled: isPending || status !== Status.completed,
+                    disabled:
+                      isClosed || isPending || status !== Status.completed,
                   },
                 ]}
               />
