@@ -22,15 +22,18 @@ export const Countdown = ({ date, doneNode }: Props) => {
   const [secondsLeft, setSecondsLeft] = useState(getSecondsLeft());
 
   useEffect(() => {
+    if (secondsLeft <= 0) return;
     const interval = setInterval(() => {
       const secondsLeft = getSecondsLeft();
       setSecondsLeft(secondsLeft);
       if (secondsLeft <= 0) {
+        // refresh page when countdown is done
+        window.location.reload();
         clearInterval(interval);
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [getSecondsLeft]);
+  }, [getSecondsLeft, secondsLeft]);
 
   const seconds = secondsLeft % 60;
   const minutes = Math.floor(secondsLeft / 60) % 60;

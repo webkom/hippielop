@@ -12,7 +12,7 @@ import {
 import { Card } from "~/app/_components/ui/card";
 import { Status } from "@prisma/client";
 import { ButtonGroup } from "~/app/_components/button-group";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 const statusClassName = {
   started: "bg-yellow-300 md:border-yellow-700 after:to-yellow-300",

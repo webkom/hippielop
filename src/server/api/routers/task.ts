@@ -6,7 +6,7 @@ import { ee } from "./group-task";
 
 export const taskRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
-    if (new Date() < boardOpensDate) return [];
+    if (new Date(new Date().getTime() + 1000 * 30) < boardOpensDate) return [];
     try {
       return await ctx.db.task.findMany({
         include: {
