@@ -24,4 +24,6 @@ COPY --from=build /app/node_modules ./node_modules
 
 EXPOSE 3000
 
+RUN apk add --no-cache openssl
+
 CMD ["yarn", "start"]
