@@ -31,15 +31,6 @@ interface BoardProps {
 export const Board = ({ tasks, currentGroup }: BoardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const [isClosed, setIsClosed] = useState(false);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsClosed(true);
-    }, boardClosesDate.getTime() - new Date().getTime());
-    return () => clearTimeout(timeout);
-  }, []);
-
   const taskColumns = tasks
     .reduce((cols, task) => {
       const col = cols.find((col) => col.points === task.points);
@@ -59,14 +50,14 @@ export const Board = ({ tasks, currentGroup }: BoardProps) => {
           onFlip={() => setIsFlipped(!isFlipped)}
           taskColumns={taskColumns}
           currentGroup={currentGroup}
-          isClosed={isClosed}
+          isClosed={false}
           page={1}
         />
         <Page
           onFlip={() => setIsFlipped(!isFlipped)}
           taskColumns={taskColumns}
           currentGroup={currentGroup}
-          isClosed={isClosed}
+          isClosed={false}
           page={2}
         />
       </ReactCardFlip>
