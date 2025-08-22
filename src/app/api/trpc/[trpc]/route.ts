@@ -5,6 +5,10 @@ import { env } from "~/env";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a HTTP request (e.g. when you make requests from Client Components).
@@ -15,8 +19,8 @@ const createContext = async (req: NextRequest) => {
   });
 };
 
-const handler = (req: NextRequest) =>
-  fetchRequestHandler({
+const handler = async (req: NextRequest) => {
+  const res = await fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
@@ -30,5 +34,11 @@ const handler = (req: NextRequest) =>
           }
         : undefined,
   });
+
+  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.headers.set("X-Accel-Buffering", "no"); // disable buffering on nginx
+  res.headers.set("Connection", "keep-alive");
+  return res;
+};
 
 export { handler as GET, handler as POST };
