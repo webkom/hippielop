@@ -1,7 +1,6 @@
 "use client";
 
 import { Pacifico } from "next/font/google";
-import { type RouterOutputs } from "~/trpc/react";
 import { Button } from "~/app/_components/ui/button";
 import { RotateCwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -10,13 +9,12 @@ import { TaskTile } from "~/app/_components/task-tile";
 import ReactCardFlip from "react-card-flip";
 import { ColorCode } from "~/app/_components/color-code";
 import { boardClosesDate } from "~/shared/config";
+import { type GetAllTask } from "~/hooks/useUpdatedTasks";
 
 export const pacifico = Pacifico({
   weight: "400",
   subsets: ["latin"],
 });
-
-type GetAllTask = RouterOutputs["task"]["getAll"][number];
 
 interface TaskColumn {
   points: number;

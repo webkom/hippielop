@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import { ApproveSchema } from "~/shared/schemas";
@@ -29,11 +29,11 @@ import {
   SelectValue,
 } from "~/app/_components/ui/select";
 import { type Group } from "@prisma/client";
-import { api } from "~/trpc/react";
 import { logout } from "~/actions/auth";
 import { useToast } from "~/app/_components/ui/use-toast";
 import { pacifico } from "~/app/_components/board";
-import { type GetAllTask, useUpdatedTasks } from "~/app/useUpdatedTasks";
+import { type GetAllTask, useUpdatedTasks } from "~/hooks/useUpdatedTasks";
+import { setTaskStatus } from "~/actions/tasks";
 import { ColorCode } from "~/app/_components/color-code";
 
 interface ApproveFormProps {
@@ -55,7 +55,7 @@ export default function ApproveForm({
 }: ApproveFormProps) {
   const tasks = useUpdatedTasks(initialTasks);
   const [error, setError] = useState<string | undefined>("");
-  const { mutate, isPending } = api.task.setStatus.useMutation();
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof ApproveSchema>>({
@@ -89,30 +89,23 @@ export default function ApproveForm({
 
   const onSubmit = (data: z.infer<typeof ApproveSchema>) => {
     setError("");
-    try {
-      mutate(
-        {
+    startTransition(async () => {
+      try {
+        await setTaskStatus({
           id: parseInt(data.taskId),
           groupId: data.groupId,
           status: "completed",
-        },
-        {
-          onSuccess: () => {
-            toast({
-              title: "Oppgave godkjent",
-              description: "Oppgaven er nå godkjent",
-            });
-            form.reset();
-          },
-          onError: (_) => {
-            setError("An unknown error occurred");
-          },
-        },
-      );
-    } catch (err) {
-      const error = err as Error;
-      setError(error.message || "An unknown error occurred");
-    }
+        });
+        toast({
+          title: "Oppgave godkjent",
+          description: "Oppgaven er nå godkjent",
+        });
+        form.reset();
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message || "An unknown error occurred");
+      }
+    });
   };
 
   return (

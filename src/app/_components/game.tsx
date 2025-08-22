@@ -5,7 +5,6 @@ import { Button } from "~/app/_components/ui/button";
 import { logout } from "~/actions/auth";
 import { Board } from "~/app/_components/board";
 import { type Group } from "@prisma/client";
-import type { RouterOutputs } from "~/trpc/react";
 import { type User } from "next-auth";
 import {
   Tabs,
@@ -13,9 +12,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
-import { useUpdatedTasks } from "~/app/useUpdatedTasks";
-
-type GetAllTask = RouterOutputs["task"]["getAll"][number];
+import { useUpdatedTasks, type GetAllTask } from "~/hooks/useUpdatedTasks";
 
 interface GameProps {
   tasks: GetAllTask[];

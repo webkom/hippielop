@@ -1,24 +1,35 @@
 import { Suspense } from "react";
-import { api, HydrateClient } from "~/trpc/server";
 import { Game } from "~/app/_components/game";
 import { boardOpensDate } from "~/shared/config";
 import { Countdown } from "~/app/_components/countdown";
+import { db } from "~/server/db";
+import { auth } from "~/server/auth";
+import { redirect } from "next/navigation";
+import { type User } from "next-auth";
 
 export default async function GamePage() {
-  const tasks = await api.task.getAll();
-  const currentGroup = await api.group.getGroup();
-  const groups = await api.group.getAll();
+  const session = await auth();
+  if (!session?.user) redirect("/");
+
+  const nowWithOffset = new Date(Date.now() + 1000 * 30);
+
+  const [tasks, groups] = await Promise.all([
+    nowWithOffset < boardOpensDate
+      ? Promise.resolve([])
+      : db.task.findMany({ include: { groups: true } }),
+    db.group.findMany(),
+  ]);
+
+  const currentGroup = session.user as User;
 
   return (
-    <HydrateClient>
-      <Suspense>
-        <Countdown
-          date={boardOpensDate}
-          doneNode={
-            <Game tasks={tasks} currentGroup={currentGroup} groups={groups} />
-          }
-        />
-      </Suspense>
-    </HydrateClient>
+    <Suspense>
+      <Countdown
+        date={boardOpensDate}
+        doneNode={
+          <Game tasks={tasks} currentGroup={currentGroup} groups={groups} />
+        }
+      />
+    </Suspense>
   );
 }

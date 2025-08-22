@@ -24,5 +24,6 @@ export default auth(async (req) => {
 });
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/"],
+  // Exclude API routes and Next internals from middleware to allow streaming/SSE
+  matcher: ["/((?!api|_next/static|_next/image|_next|favicon.ico|.*\\..*).*)"],
 };
