@@ -11,7 +11,7 @@ const fetcher = async (url: string): Promise<TaskDTO[]> => {
 
 export const useUpdatedTasks = (initialTasks: GetAllTask[] = []) => {
   const { data } = useSWR<GetAllTask[]>("/api/tasks", fetcher, {
-    refreshInterval: 3000,
+    refreshInterval: 5000,
     revalidateOnFocus: false,
     keepPreviousData: true,
     fallbackData: initialTasks,
