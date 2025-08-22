@@ -1,4 +1,5 @@
-import { api, type RouterOutputs } from "~/trpc/react";
+"use client";
+
 import {
   Drawer,
   DrawerClose,
@@ -12,7 +13,10 @@ import {
 import { Card } from "~/app/_components/ui/card";
 import { Status } from "@prisma/client";
 import { ButtonGroup } from "~/app/_components/button-group";
-import { useState } from "react";
+import { type GetAllTask } from "~/hooks/useUpdatedTasks";
+import { setTaskStatus } from "~/actions/tasks";
+import { useTransition, useState } from "react";
+import { useSWRConfig } from "swr";
 
 const statusClassName = {
   started: "bg-yellow-300 md:border-yellow-700 after:to-yellow-300",
@@ -21,8 +25,6 @@ const statusClassName = {
   notStarted: "bg-card after:to-card",
 };
 
-type GetAllTask = RouterOutputs["task"]["getAll"][number];
-
 interface TaskTileProps {
   task: GetAllTask;
   groupId: string;
@@ -30,7 +32,8 @@ interface TaskTileProps {
 }
 
 export const TaskTile = ({ task, groupId, isClosed }: TaskTileProps) => {
-  const { mutate, isPending } = api.task.setStatus.useMutation();
+  const [isPendingTransition, startTransition] = useTransition();
+  const { mutate } = useSWRConfig();
   const [textElement, setTextElement] = useState<HTMLParagraphElement | null>(
     null,
   );
@@ -40,6 +43,8 @@ export const TaskTile = ({ task, groupId, isClosed }: TaskTileProps) => {
 
   const status =
     task.groups.find((g) => g.groupId === groupId)?.status ?? Status.notStarted;
+
+  const isPending = isPendingTransition;
 
   return (
     <Drawer>
@@ -71,7 +76,10 @@ export const TaskTile = ({ task, groupId, isClosed }: TaskTileProps) => {
               <ButtonGroup
                 value={status}
                 onValueChange={(value) => {
-                  mutate({ id: task.id, status: value });
+                  startTransition(async () => {
+                    await setTaskStatus({ id: task.id, status: value });
+                    void mutate("/api/tasks");
+                  });
                 }}
                 items={[
                   {

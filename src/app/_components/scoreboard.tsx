@@ -2,7 +2,7 @@
 
 import { type Group } from "@prisma/client";
 import { pacifico } from "./board";
-import { type GetAllTask } from "~/app/useUpdatedTasks";
+import { type GetAllTask } from "~/hooks/useUpdatedTasks";
 
 const scoreboardColors = [
   { border: "border-[#f6b815]", bg: "bg-[#f6b815]" },

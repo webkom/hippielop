@@ -20,7 +20,10 @@ export const ButtonGroup = <T extends string>({
     <ToggleGroup.Root
       type="single"
       value={value}
-      onValueChange={onValueChange}
+      onValueChange={(v) => {
+        if (!v) return;
+        onValueChange(v as T);
+      }}
       className="inline-flex overflow-hidden rounded-full border-2 text-sm ring-offset-background"
     >
       {items.map((item) => (
