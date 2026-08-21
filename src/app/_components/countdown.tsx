@@ -22,7 +22,9 @@ export const Countdown = ({ date, doneNode }: Props) => {
   const [secondsLeft, setSecondsLeft] = useState(getSecondsLeft());
 
   useEffect(() => {
-    if (secondsLeft <= 0) return;
+    setSecondsLeft(getSecondsLeft());
+
+    if (getSecondsLeft() <= 0) return;
     const interval = setInterval(() => {
       const secondsLeft = getSecondsLeft();
       setSecondsLeft(secondsLeft);
@@ -33,7 +35,7 @@ export const Countdown = ({ date, doneNode }: Props) => {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [getSecondsLeft, secondsLeft]);
+  }, [getSecondsLeft]);
 
   const seconds = secondsLeft % 60;
   const minutes = Math.floor(secondsLeft / 60) % 60;
@@ -70,7 +72,9 @@ const TimeBox = ({ title, number, className }: TimeBoxProps) => {
       className={`flex aspect-square w-20 flex-col justify-center ${className}`}
     >
       <p className="text-center">{title}</p>
-      <p className="text-center text-2xl">{number}</p>
+      <p className="text-center text-2xl" suppressHydrationWarning>
+        {number}
+      </p>
     </div>
   );
 };
