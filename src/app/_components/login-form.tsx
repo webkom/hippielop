@@ -48,9 +48,8 @@ export default function LoginForm() {
         if (res) {
           window.location.reload();
         }
-      } catch (err) {
-        const error = err as Error;
-        setError(error.message || "An unknown error occurred");
+      } catch {
+        setError("Feil kode!");
       }
     });
   };

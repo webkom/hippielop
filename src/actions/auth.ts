@@ -1,7 +1,6 @@
 "use server";
 
 import { signIn, signOut } from "~/server/auth";
-import { AuthError } from "next-auth";
 import type * as z from "zod";
 import { LoginSchema } from "~/shared/schemas";
 
@@ -16,7 +15,7 @@ export const login = async (
   const validatedFields = LoginSchema.safeParse(credentials);
 
   if (!validatedFields.success) {
-    throw new Error("Ugyldig kode!");
+    throw new Error("Feil kode!");
   }
 
   const { code } = validatedFields.data;
@@ -25,16 +24,8 @@ export const login = async (
       code: code,
       redirect: false,
     });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          throw new Error("Feil kode!");
-        default:
-          throw new Error("Noe gikk galt!");
-      }
-    }
-    throw new Error("Noe gikk galt!");
+  } catch {
+    throw new Error("Feil kode!");
   }
 
   return true;
